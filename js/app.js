@@ -1,21 +1,22 @@
 // touchEvent
 
-document.addEventListener('touchstart', e => {
-    ;[...e.changedTouches].forEach(touch => {
-        
-        userdiv.style.top = `${touch.pageY}px`
-        userdiv.style.left = `${touch.pageX}px`
-        // userdiv.className = touch.identifier;
-    })
-})
+// document.addEventListener("touchstart", (e) => {
+//   [...e.changedTouches].forEach((touch) => {
+//     userdiv.style.top = `${touch.pageY}px`;
+//     userdiv.style.left = `${touch.pageX}px`;
+//     // userdiv.className = touch.identifier;
+//     console.log(touch);
+//   });
+// });
 
-document.addEventListener('touchmove', e => {
-    ;[...e.changedTouches].forEach(touch => {
-        // userdiv.className = touch.identifier;
-        userdiv.style.top = `${touch.pageY}px`
-        userdiv.style.left = `${touch.pageX}px`
-    })
-})
+// document.addEventListener("touchmove", (e) => {
+//   [...e.changedTouches].forEach((touch) => {
+//     // userdiv.className = touch.identifier;
+//     userdiv.style.top = `${touch.pageY}px`;
+//     userdiv.style.left = `${touch.pageX}px`;
+//     console.log(touch);
+//   });
+// });
 
 // document.addEventListener('touchend', e => {
 // })
@@ -24,7 +25,7 @@ const wrap = document.querySelector(".wrap");
 const blockWidth = 100;
 const blockHeight = 20;
 
-const userStart = [170, 10];
+const userStart = [165, 10];
 let currentPosition = userStart;
 
 //Block 생성
@@ -39,25 +40,27 @@ class Block {
 
 // 나의 모든 블록
 const blocks = [
-    new Block(10, 270),
-    new Block(90, 270),
-    new Block(170, 270),
-    new Block(250, 270),
-    new Block(330, 270),
+  new Block(15, 270),
+  new Block(75, 270),
+  new Block(135, 270),
+  new Block(195, 270),
+  new Block(255, 270),
+  new Block(315, 270),
 
-    new Block(10, 245),
-    new Block(90, 245),
-    new Block(170, 245),
-    new Block(250, 245),
-    new Block(330, 245),
+  new Block(15, 245),
+  new Block(75, 245),
+  new Block(135, 245),
+  new Block(195, 245),
+  new Block(255, 245),
+  new Block(315, 245),
 
-    new Block(10, 220),
-    new Block(90, 220),
-    new Block(170, 220),
-    new Block(250, 220),
-    new Block(330, 220),
+  new Block(15, 220),
+  new Block(75, 220),
+  new Block(135, 220),
+  new Block(195, 220),
+  new Block(255, 220),
+  new Block(315, 220),
 ];
-
 
 //b모든 블록 그리기
 function addBlocks() {
@@ -66,8 +69,8 @@ function addBlocks() {
     block.classList.add("block");
     // block left,bottom
     let blockMove = block.style;
-    blockMove.left = blocks[i].bottomLeft[0] + 'px';
-    blockMove.bottom = blocks[i].bottomLeft[1] + 'px';
+    blockMove.left = blocks[i].bottomLeft[0] + "px";
+    blockMove.bottom = blocks[i].bottomLeft[1] + "px";
     wrap.appendChild(block);
   }
 }
@@ -75,20 +78,27 @@ function addBlocks() {
 addBlocks();
 
 // 사용자
-const userdiv = document.createElement('div');
-userdiv.classList.add('user');
+const userdiv = document.createElement("div");
+userdiv.classList.add("user");
 let userMove = userdiv.style;
-// currentPosition[0] 의미는 userstart 의 첫 번째 값 230
-userMove.left = currentPosition[0] + 'px';
-userMove.bottom = currentPosition[1] + 'px';
+drawUser();
 wrap.appendChild(userdiv);
 
-// 사용자 이동
-function moveuser(e) {
-    switch(e.key){
-        case 'Arrowleft' : 
-        currentPosition[0] -= 10
-        
-    }
+// draw the user
+function drawUser() {
+  // currentPosition[0] 의미는 userstart 의 첫 번째 값 230
+  userMove.left = currentPosition[0] + "px";
+  userMove.bottom = currentPosition[1] + "px";
 }
 
+// 사용자 이동
+function moveUser(e) {
+  switch (e.key) {
+    case "Arrowleft":
+      currentPosition[0] -= 10;
+      drawUser();
+      break;
+  }
+}
+
+document.addEventListener('click', moveUser);
