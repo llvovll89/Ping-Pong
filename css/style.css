@@ -4,6 +4,11 @@
     box-sizing: border-box;
 }
 
+:root {
+    --main-background : #ffffff;
+    --basick-background : #eeeeee;
+}
+
 img {
     max-width: 100%;
     display: block;
@@ -11,17 +16,34 @@ img {
     image-rendering: -webkit-optimize-contrast;
 }
 
+body {
+    background: var(--basick-background);
+}
+
 .wrap {
+    background: var(--main-background);
     position: relative;
     margin: 0 auto;
     margin-top: 10%;
-    max-width: 380px;
+    max-width: 370px;
     height: 300px;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     border-bottom-left-radius: 30px;
     border-bottom-right-radius: 30px;
-    box-shadow: 1px 1px 6px rgba(0, 0, 0, .25);
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, .3),
+        -2px -2px 1px rgba(0, 0, 0, .1);
+}
+
+.title {
+    background: var(--main-background);
+    margin: 0 auto;
+    margin-top: 5px;
+    width: 20%;
+    text-align: center;
+    color: #333;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, .1),
+    -1px -1px 2px rgba(0, 0, 0, .25);
 }
 
 .wrap::before {
@@ -34,6 +56,7 @@ img {
     border-top-right-radius: 50%;
     border-bottom-left-radius: 50%;
     background: #333;
+    animation: moveright linear 2s infinite;
 }
 
 .wrap::after {
@@ -57,6 +80,7 @@ img {
     border-top-left-radius: 50%;
     border-bottom-right-radius: 50%;
     background: #333;
+    animation: moveleft linear infinite 2s;
 }
 
 .logo::before {
@@ -77,12 +101,12 @@ img {
     background-image: url(../img/block2.png);
     background-size: cover;
     background-repeat: no-repeat;
-    border-radius: 3px;
+    border-radius: 12px;
 }
 
 .user {
     position: absolute;
-    width: 70px;
+    width: 60px;
     height: 20px;
     background-image: url(../img/user.png);
     background-size: cover;
@@ -90,8 +114,33 @@ img {
     background-position: center;
 }
 
-/* @media (max-width: 564px) {
+.ball {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-size: cover;
+    background-position: center;
+    background-image: url(../img/shoter.png);
+}
 
-    
 
-} */
+/* animate */
+/* .wrap::before 
+.logo */
+@keyframes moveright {
+    0% {
+        transform: rotateZ(0);
+    }
+    100% {
+        transform: rotateZ(360deg);
+    }
+}
+
+@keyframes moveleft {
+    0% {
+        transform: rotateZ(0);
+    }
+    100% {
+        transform: rotateZ(-360deg);
+    }
+}

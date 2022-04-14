@@ -1,32 +1,29 @@
-// touchEvent
-
-// document.addEventListener("touchstart", (e) => {
-//   [...e.changedTouches].forEach((touch) => {
-//     userdiv.style.top = `${touch.pageY}px`;
-//     userdiv.style.left = `${touch.pageX}px`;
-//     // userdiv.className = touch.identifier;
-//     console.log(touch);
-//   });
-// });
-
-// document.addEventListener("touchmove", (e) => {
-//   [...e.changedTouches].forEach((touch) => {
-//     // userdiv.className = touch.identifier;
-//     userdiv.style.top = `${touch.pageY}px`;
-//     userdiv.style.left = `${touch.pageX}px`;
-//     console.log(touch);
-//   });
-// });
-
-// document.addEventListener('touchend', e => {
-// })
-
 const wrap = document.querySelector(".wrap");
-const blockWidth = 100;
+const blockWidth = 50;
 const blockHeight = 20;
+const ballDiameter = 20;
+// wrap - 넓이
+const wrapWidth = 370;
+const wrapHeight = 300;
+let timerId;
+let xDirection = -2;
+let yDirection = 2;
 
-const userStart = [165, 10];
+const userStart = [155, 10];
 let currentPosition = userStart;
+
+// ball start
+const ballStart = [175, 40];
+let ballCurrenPosition = ballStart;
+
+// arrow up & down (e)
+const title = document.querySelector(".title");
+const text1 = document.createElement("h1");
+const text2 = document.createElement("h2");
+title.appendChild(text1);
+title.appendChild(text2);
+let score = 0;
+// text1.textContent = 0;
 
 //Block 생성
 class Block {
@@ -41,28 +38,28 @@ class Block {
 // 나의 모든 블록
 const blocks = [
   new Block(15, 270),
-  new Block(75, 270),
-  new Block(135, 270),
-  new Block(195, 270),
-  new Block(255, 270),
-  new Block(315, 270),
+  new Block(70, 270),
+  new Block(130, 270),
+  new Block(190, 270),
+  new Block(250, 270),
+  new Block(310, 270),
 
   new Block(15, 245),
-  new Block(75, 245),
-  new Block(135, 245),
-  new Block(195, 245),
-  new Block(255, 245),
-  new Block(315, 245),
+  new Block(70, 245),
+  new Block(130, 245),
+  new Block(190, 245),
+  new Block(250, 245),
+  new Block(310, 245),
 
   new Block(15, 220),
-  new Block(75, 220),
-  new Block(135, 220),
-  new Block(195, 220),
-  new Block(255, 220),
-  new Block(315, 220),
+  new Block(70, 220),
+  new Block(130, 220),
+  new Block(190, 220),
+  new Block(250, 220),
+  new Block(310, 220),
 ];
 
-//b모든 블록 그리기
+// 모든 블록 그리기
 function addBlocks() {
   for (let i = 0; i < blocks.length; i++) {
     const block = document.createElement("div");
@@ -91,14 +88,135 @@ function drawUser() {
   userMove.bottom = currentPosition[1] + "px";
 }
 
+// ball draw
+function drawBall() {
+  ballStyle.left = ballCurrenPosition[0] + "px";
+  ballStyle.bottom = ballCurrenPosition[1] + "px";
+}
+
 // 사용자 이동
 function moveUser(e) {
   switch (e.key) {
-    case "Arrowleft":
-      currentPosition[0] -= 10;
-      drawUser();
+    //   e.key 이벤트(키보드 방향 이벤트 - > case 옆 방향)
+    case "ArrowLeft":
+      // if 문 의미 = left값이 10보다 커야댐(wrap 나가는거 방지)
+      if (currentPosition[0] > 10) {
+        currentPosition[0] -= 20;
+        drawUser();
+      }
+      break;
+    case "ArrowRight":
+      if (currentPosition[0] < wrapWidth - 70) {
+        currentPosition[0] += 20;
+        drawUser();
+      }
+      break;
+    case "ArrowUp":
+      if (currentPosition[1] < wrapHeight - 40) {
+        currentPosition[1] += 10;
+        drawUser();
+      }
+      break;
+    case "ArrowDown":
+      if (currentPosition[1] > 10) {
+        currentPosition[1] -= 10;
+        drawUser();
+      }
       break;
   }
 }
 
-document.addEventListener('click', moveUser);
+document.addEventListener("keydown", moveUser);
+
+// add Ball
+const ball = document.createElement("div");
+ball.classList.add("ball");
+let ballStyle = ball.style;
+drawBall();
+wrap.appendChild(ball);
+
+// move ball
+function moveBall() {
+  ballCurrenPosition[0] += xDirection;
+  ballCurrenPosition[1] += yDirection;
+  drawBall();
+  checkForCollistions();
+}
+
+timerId = setInterval(moveBall, 20);
+
+// 충돌 확인
+function checkForCollistions() {
+  // check for block collisions
+  for (let i = 0; i < blocks.length; i++) {
+    if (
+      ballCurrenPosition[0] > blocks[i].bottomLeft[0] &&
+      ballCurrenPosition[0] < blocks[i].bottomRight[0] &&
+      ballCurrenPosition[1] + ballDiameter > blocks[i].bottomLeft[1] &&
+      ballCurrenPosition[1] < blocks[i].topLeft[1]
+    ) {
+      const allBlocks = Array.from(document.querySelectorAll(".block"));
+      allBlocks[i].classList.remove("block");
+      // i , 1번째만큼
+      blocks.splice(i, 1);
+      changeDirection();
+      score++;
+      title.innerHTML = score;
+
+      // check for win
+      if (blocks.length === 0) {
+        swal("축하합니다!", "성공하셨어요!", "success");
+        clearInterval(timerId)
+        document.removeEventListener('keydown', moveUser);
+      }
+    }
+  }
+
+  // check for wall collisions
+  if (
+    //   370
+    ballCurrenPosition[0] >= wrapWidth - ballDiameter ||
+    ballCurrenPosition[1] >= wrapHeight - ballDiameter ||
+    ballCurrenPosition[0] <= 0
+  ) {
+    changeDirection();
+  }
+
+  //   check for user collisions
+  if (
+    ballCurrenPosition[0] > currentPosition[0] &&
+    ballCurrenPosition[0] < currentPosition[0] + blockWidth &&
+    ballCurrenPosition[1] > currentPosition[1] &&
+    ballCurrenPosition[1] < currentPosition[1] + blockHeight
+  ) {
+    changeDirection();
+  }
+
+  //   check for game over
+  if (ballCurrenPosition[1] <= 0) {
+    clearInterval(timerId);
+    title.innerHTML = "you Lose";
+    document.removeEventListener("keydown", moveUser);
+  }
+}
+
+function changeDirection() {
+  if (xDirection === 2 && yDirection === 2) {
+    yDirection = -2;
+    return;
+  }
+  if (xDirection === 2 && yDirection === -2) {
+    xDirection = -2;
+    return;
+  }
+  if (xDirection === -2 && yDirection === -2) {
+    yDirection = 2;
+    return;
+  }
+  if (xDirection === -2 && yDirection === 2) {
+    xDirection = 2;
+    return;
+  }
+}
+
+// block 사라질 시 title 부분 점수
